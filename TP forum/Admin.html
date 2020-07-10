@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Admin</title>
+</head>
+<body>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.13.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.13.0/firebase-firestore.js"></script>
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+         https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.13.0/firebase-analytics.js"></script>
+    <script>
+        /*
+        var user = prompt("Enter your username: ");
+        var pass = prompt("Enter your password: ");
+        if (user != "Nef" && pass != "ecogeologo21") {
+            alert("Invalid information!!");
+            window.stop();
+        }*/
+    </script>
+    <label>Get data to a table</label>
+
+    <button onclick="GetFireBaseData()">Click to get data</button>
+    <br />
+    <table id="dataTable">
+        <tr>
+            <td>CCMS</td>
+            <td>Name</td>
+            <td>LOB</td>
+            <td>Supervisor</td>
+            <td>Date</td>
+            <td>Issue</td>
+            <td>Description</td>
+            <td>Time started</td>
+            <td>Time ended</td>
+        </tr>
+    </table>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyAzWS4N1WBa35Bma6EmhtqCyW84h1wRORA",
+            authDomain: "waha-forum.firebaseapp.com",
+            databaseURL: "https://waha-forum.firebaseio.com",
+            projectId: "waha-forum",
+            storageBucket: "waha-forum.appspot.com",
+            messagingSenderId: "858808318047",
+            appId: "1:858808318047:web:09c583f854eebc1f5983ea",
+            measurementId: "G-TCQEQRQWJB"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.firestore();
+        const postCollection = database.collection("Posts")
+        function GetFireBaseData() {
+            var dataTable = document.getElementById("dataTable");
+            postCollection.get().then(snapshot => {
+                //For each will iterate through Ids
+                snapshot.forEach(post => {
+                    console.log(post.id, ' => ', post.data());
+                    postCollection.doc(post.id).get().then(_post => {
+                        if (_post.data().Issue == "Outage" || _post.data().Issue == "outage" || _post.data().Description.includes("outage") || _post.data().Description.includes("Outage")) {
+                            var r = dataTable.insertRow();
+                            var ccmsCell = r.insertCell();
+                            var nameCell = r.insertCell();
+                            var lobCell = r.insertCell();
+                            var supCell = r.insertCell();
+                            var dateCell = r.insertCell();
+                            var issueCell = r.insertCell();
+                            var descriptionCell = r.insertCell();
+                            var timeStartCell = r.insertCell();
+                            var timeEndCell = r.insertCell();
+                            //var phoneCell = r.insertCell();
+                            ccmsCell.innerHTML = _post.data().CCMS_ID;
+                            nameCell.innerHTML = _post.data().Name;
+                            lobCell.innerHTML = _post.data().Line_Of_Bussiness;
+                            supCell.innerHTML = _post.data().Supervisor;
+                            dateCell.innerHTML = _post.data().Date;
+                            issueCell.innerHTML = _post.data().Issue;
+                            descriptionCell.innerHTML = _post.data().Description;
+                            timeStartCell.innerHTML = _post.data().Time_Started;
+                            timeEndCell.innerHTML = _post.data().Time_Ended;
+                            //phoneCell.innerHTML = _post.data().Phone;
+                        }
+                    });
+                });
+            })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+    </script>
+</body>
+</html>
